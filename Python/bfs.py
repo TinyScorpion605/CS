@@ -1,6 +1,33 @@
-graph = {"A":["B", "C"], "B":["D", "E"], "C":["F"], "D":[], "E":[], "F":["G"], "G":[]}
+graph = {
+    "A": ["B", "C", "D", "E"],
+    "B": ["E", "F", "G"],
+    "C": ["F", "G", "H", "I"],
+    "D": ["H", "I", "J", "K"],
+    "E": ["J", "K", "L", "A"], 
+    "F": ["K", "L", "M"],    
+    "G": ["L", "M", "N", "O"],
+    "H": ["M", "N", "O", "P"],
+    "I": ["N", "O", "P"],
+    "J": ["P", "Q", "R", "S"],
+    "K": ["Q", "R", "S", "T"], 
+    "L": ["R", "S", "U"],
+    "M": [],         
+    "N": ["U", "V", "W"],
+    "O": ["U", "V", "X"],
+    "P": ["V", "W", "Y"],
+    "Q": ["W", "X"],
+    "R": ["X", "Y", "A"],   
+    "S": ["Y", "B", "C"],
+    "T": [],           
+    "U": ["F", "G"],
+    "V": ["T"],          
+    "W": ["C", "J"],
+    "X": ["M"],              
+    "Y": ["E", "N"],
+    "Z": []               
+}
 start = "A"
-target = "D"
+target = "M"
 target_found = False
 
 visited = []
@@ -10,29 +37,30 @@ wait = []
 visited.append(start)
 path.append(start)
 wait.append(start)
-node = visited[0]
 
-while wait != []:
-    if wait[0] not in visited:
-        visited.append(wait[0])
-        path.append(wait[0])    
-        wait.remove(wait[0])
+queue = [[start]]
 
-    elif wait[0] in visited:
-        wait.remove(wait[0])
-
+while wait and not target_found:
+    current_path = queue.pop(0)
+    wait.pop(0)
+    node = current_path[-1]
+    
+    if node == target:
+        target_found = True
+        path = current_path
+        break
+        
+    if node not in visited:
+        visited.append(node)
+        
     for neighbor in graph[node]:
-        if graph[neighbor] == [] and graph[neighbor] != target:
+        if neighbor not in visited and neighbor not in [p[-1] for p in queue]:
+            new_path = list(current_path)
+            new_path.append(neighbor)
+            queue.append(new_path)
             wait.append(neighbor)
-            if neighbor in path:
-                path.remove(neighbor)
-            
-            neighbor = wait[-2]
-            node = visited[-2]
-        else:
-            node = neighbor
-            wait.append(node)
-            
-print(wait)
-print(visited)
-print(path)
+
+if target_found:
+    print("Path Found: ", path)
+else:
+    print("Target not found.")
