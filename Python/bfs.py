@@ -1,5 +1,6 @@
 # Breadth First Search Algorithm
-graph = {
+
+graph = {   
     "A": ["B", "C", "D", "E"],
     "B": ["E", "F", "G"],
     "C": ["F", "G", "H", "I"],
@@ -27,41 +28,28 @@ graph = {
     "Y": ["E", "N"],
     "Z": []               
 }
+
 start = "A"
-target = "M"
+target = "O"
 target_found = False
-
-visited = []
-path = []
-wait = []
-
-visited.append(start)
-path.append(start)
-wait.append(start)
-
+traversed = []
 queue = [[start]]
+visited = [start]
 
-while wait and not target_found:
-    current_path = queue.pop(0)
-    wait.pop(0)
-    node = current_path[-1]
-    
+while queue:
+    path = queue.pop(0)
+    node = path[-1]
+
+    traversed.append(node)
+    print(node)
+
     if node == target:
-        target_found = True
-        path = current_path
+        print("Path Found:", path)
         break
-        
-    if node not in visited:
-        visited.append(node)
-        
-    for neighbor in graph[node]:
-        if neighbor not in visited and neighbor not in [p[-1] for p in queue]:
-            new_path = list(current_path)
-            new_path.append(neighbor)
-            queue.append(new_path)
-            wait.append(neighbor)
 
-if target_found:
-    print("Path Found: ", path)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            visited.append(neighbor)
+            queue.append(path + [neighbor])
 else:
     print("Target not found.")
